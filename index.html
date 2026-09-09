@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perpustakaan Digital - SMPIT Al Madaniy Lubuk Basung</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- QRCode.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            navy: '#0b192c',
+                            emerald: '#059669',
+                            emeraldDark: '#047857',
+                            gold: '#d97706',
+                            goldLight: '#f59e0b',
+                            slateBg: '#f8fafc',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #059669;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #047857;
+        }
+
+        /* Islamic Geometric Subdued Pattern Accent */
+        .bg-islamic-pattern {
+            background-color: #0b192c;
+            background-image: radial-gradient(#d97706 0.75px, transparent 0.75px), radial-gradient(#059669 0.75px, #0b192c 0.75px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            background-opacity: 0.15;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .glass-dark {
+            background: rgba(11, 25, 44, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(217, 119, 6, 0.2);
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .emerald-gradient-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        .emerald-gradient-btn:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-brand-emerald selection:text-white">
+
+    <!-- Toast Notification Container -->
+    <div id="toast" class="fixed top-5 right-5 z-50 transform translate-x-full transition-transform duration-300 ease-in-out bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border-l-4 border-brand-gold max-w-md">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-brand-gold text-lg"></i>
+        <span id="toast-message" class="text-sm font-medium">Notifikasi</span>
+    </div>
+
+    <!-- WELCOME / LOGIN & QR MODAL GATE -->
+    <div id="gate-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="glass-card w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border border-brand-gold/30 transition-all duration-300">
+            <!-- Modal Header -->
+            <div class="bg-islamic-pattern p-6 sm:p-8 text-white text-center relative">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-emerald to-brand-gold p-0.5 shadow-lg mb-3">
+                    <div class="w-full h-full bg-brand-navy rounded-[14px] flex items-center justify-center">
+                        <i class="fa-solid fa-book-quran text-2xl text-brand-gold"></i>
+                    </div>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">E-Library SMPIT Al Madaniy</h2>
+                <p class="text-xs sm:text-sm text-slate-300 mt-1 font-light">Lubuk Basung, Kabupaten Agam - Sumatera Barat</p>
+                <span class="inline-block mt-3 px-3 py-1 rounded-full text-xs font-semibold bg-brand-emerald/20 text-emerald-300 border border-brand-emerald/40">
+                    <i class="fa-solid fa-star text-brand-gold mr-1"></i> Literasi Islami & Abad 21
+                </span>
+            </div>
+
+            <!-- Modal Content & Forms -->
+            <div class="p-6 sm:p-8">
+                <!-- Navigation Tabs inside Modal -->
+                <div class="flex border-b border-slate-200 mb-6 text-sm font-semibold">
+                    <button id="tab-btn-guest" onclick="switchGateTab('guest')" class="flex-1 py-3 text-center text-brand-emerald border-b-2 border-brand-emerald transition-all">
+                        <i class="fa-solid fa-user-pen mr-2"></i> Masuk Tamu / Siswa
+                    </button>
+                    <button id="tab-btn-qr" onclick="switchGateTab('qr')" class="flex-1 py-3 text-center text-slate-400 hover:text-slate-600 transition-all">
+                        <i class="fa-solid fa-qrcode mr-2"></i> QR Code Akses Cepat
+                    </button>
+                </div>
+
+                <!-- Form 1: Manual Guest Input -->
+                <form id="gate-form-guest" onsubmit="handleGuestLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Nama Lengkap Pengunjung</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input type="text" id="user-name" required placeholder="Contoh: Muhammad Rayhan / Ustadz Ahmad" 
+                                class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-emerald focus:border-transparent text-slate-800 placeholder-slate-400 text-sm outline-none transition">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">ID Pengguna / NIS / NIP (Opsional)</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input type="text" id="user-id" placeholder="Contoh: NIS-2026001 atau TAMU-01" 
+                                class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-emerald focus:border-transparent text-slate-800 placeholder-slate-400 text-sm outline-none transition">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Peran Akses</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="user-role" value="Murid" checked class="peer hidden">
+                                <div class="p-2.5 text-center text-xs font-semibold rounded-xl border border-slate-200 peer-checked:border-brand-emerald peer-checked:bg-emerald-50 peer-checked:text-brand-emerald text-slate-600 transition">
+                                    <i class="fa-solid fa-user-graduate block text-base mb-1"></i> Murid SMP
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="user-role" value="Guru" class="peer hidden">
+                                <div class="p-2.5 text-center text-xs font-semibold rounded-xl border border-slate-200 peer-checked:border-brand-emerald peer-checked:bg-emerald-50 peer-checked:text-brand-emerald text-slate-600 transition">
+                                    <i class="fa-solid fa-chalkboard-user block text-base mb-1"></i> Ustadz / Guru
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="user-role" value="Tamu" class="peer hidden">
+                                <div class="p-2.5 text-center text-xs font-semibold rounded-xl border border-slate-200 peer-checked:border-brand-emerald peer-checked:bg-emerald-50 peer-checked:text-brand-emerald text-slate-600 transition">
+                                    <i class="fa-solid fa-users text-base block mb-1"></i> Tamu Umum
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 px-6 rounded-xl emerald-gradient-btn text-white font-bold text-sm shadow-lg shadow-emerald-600/30 hover:shadow-emerald-600/50 transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
+                        <span>Masuk ke Perpustakaan</span>
+                        <i class="fa-solid fa-arrow-right-long"></i>
+                    </button>
+                </form>
+
+                <!-- Form 2: QR Code Scan / Direct Display -->
+                <div id="gate-form-qr" class="hidden text-center space-y-4 py-2">
+                    <p class="text-xs text-slate-500">Pindai QR Code Kartu Anggota Perpustakaan SMPIT Al Madaniy untuk otomatis login tanpa ketik nama.</p>
+                    <div class="flex justify-center my-3">
+                        <div class="p-4 bg-white border-2 border-dashed border-brand-gold rounded-2xl shadow-inner inline-block">
+                            <div id="qrcode-canvas" class="flex justify-center"></div>
+                        </div>
+                    </div>
+                    <p class="text-xs font-mono text-brand-emerald bg-emerald-50 py-1.5 px-4 rounded-lg inline-block font-semibold">
+                        KODE AKSES: ALMADANIY-LIB-2026
+                    </p>
+                    <div>
+                        <button onclick="loginWithDefaultQR()" class="w-full py-3 px-6 rounded-xl bg-brand-navy hover:bg-slate-800 text-white font-bold text-sm shadow-md transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-bolt text-brand-gold"></i>
+                            <span>Akses Langsung via QR Demo</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-slate-50 px-6 py-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+                <span><i class="fa-solid fa-shield-halved text-emerald-600"></i> Platform Resmi Terverifikasi</span>
+                <span>v2.4 - Modern Library System</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APPLICATION (Hidden until Gate Login) -->
+    <div id="main-app" class="min-h-screen flex flex-col hidden opacity-0 transition-opacity duration-500">
+        
+        <!-- Top Navigation Bar -->
+        <header class="sticky top-0 z-40 bg-brand-navy/95 backdrop-blur-md border-b border-brand-gold/20 text-white shadow-xl">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-20">
+                    <!-- School & Library Brand -->
+                    <div class="flex items-center space-x-3 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+                        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-emerald to-brand-gold p-0.5 shadow-md flex-shrink-0">
+                            <div class="w-full h-full bg-brand-navy rounded-[14px] flex items-center justify-center">
+                                <i class="fa-solid fa-book-open-reader text-brand-gold text-lg"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <h1 class="font-extrabold text-base sm:text-lg tracking-tight text-white leading-none">SMPIT AL MADANIY</h1>
+                                <span class="bg-brand-gold text-slate-950 text-[10px] font-black px-1.5 py-0.5 rounded uppercase">DIGITAL</span>
+                            </div>
+                            <p class="text-xs text-slate-300 font-light mt-0.5">Perpustakaan & Pusat Literasi Islam</p>
+                        </div>
+                    </div>
+
+                    <!-- Search Bar in Header -->
+                    <div class="hidden md:flex flex-1 max-w-md mx-8">
+                        <div class="relative w-full">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                            <input type="text" id="global-search-input" onkeyup="filterBooks()" placeholder="Cari judul buku, penulis, atau topik keislaman..." 
+                                class="w-full pl-10 pr-4 py-2 text-xs rounded-full bg-slate-800/80 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:border-brand-emerald focus:ring-1 focus:ring-brand-emerald transition">
+                        </div>
+                    </div>
+
+                    <!-- User Info & Fast QR Button -->
+                    <div class="flex items-center space-x-3">
+                        <button onclick="showUserQRModal()" title="Kartu Akses QR Anda" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-brand-gold border border-slate-700 transition">
+                            <i class="fa-solid fa-qrcode text-base"></i>
+                        </button>
+
+                        <!-- User Badge -->
+                        <div class="flex items-center space-x-3 pl-3 border-l border-slate-700">
+                            <div class="hidden sm:block text-right">
+                                <div id="display-user-name" class="text-xs font-bold text-white truncate max-w-[130px]">Nama Tamu</div>
+                                <div id="display-user-role" class="text-[10px] text-emerald-400 font-medium">Siswa SMP</div>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-brand-emerald/30 border border-brand-emerald/50 flex items-center justify-center text-brand-gold font-bold text-sm shadow">
+                                <span id="display-user-initials">TM</span>
+                            </div>
+                            <button onclick="reopenGateModal()" title="Ganti Pengguna" class="text-slate-400 hover:text-rose-400 text-xs pl-1">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Search Bar (Visible on mobile screens) -->
+            <div class="md:hidden px-4 pb-3">
+                <div class="relative w-full">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="mobile-search-input" onkeyup="syncMobileSearch()" placeholder="Cari buku, ustadz, pelajaran..." 
+                        class="w-full pl-10 pr-4 py-2 text-xs rounded-full bg-slate-800/90 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:border-brand-emerald">
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 pb-16">
+
+            <!-- Hero Banner Section -->
+            <section class="bg-islamic-pattern text-white py-12 px-4 sm:px-6 lg:px-8 border-b border-brand-gold/30 relative overflow-hidden">
+                <div class="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div class="max-w-2xl text-center md:text-left">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-emerald/20 border border-brand-emerald/40 text-emerald-300 text-xs font-semibold mb-4">
+                            <i class="fa-solid fa-book text-brand-gold"></i> QS. Al-'Alaq 1-5: "Iqra' - Bacalah!"
+                        </div>
+                        <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+                            Jendela Ilmu & Peradaban Santri <span class="gold-gradient-text">SMPIT Al Madaniy</span>
+                        </h2>
+                        <p class="mt-3 text-slate-300 text-sm sm:text-base font-light leading-relaxed">
+                            Membentuk generasi Rabbani berwawasan global, unggul literasi digital, dan berlandaskan akhlakul karimah di Lubuk Basung.
+                        </p>
+                        
+                        <!-- Quick Stats -->
+                        <div class="mt-6 grid grid-cols-3 gap-3 pt-4 border-t border-slate-800 max-w-lg mx-auto md:mx-0">
+                            <div>
+                                <p class="text-xl font-bold text-brand-gold">1,200+</p>
+                                <p class="text-[11px] text-slate-400">E-Book Islami & Umum</p>
+                            </div>
+                            <div>
+                                <p class="text-xl font-bold text-emerald-400">100%</p>
+                                <p class="text-[11px] text-slate-400">Gratis & Bebas Akses</p>
+                            </div>
+                            <div>
+                                <p class="text-xl font-bold text-amber-300">6+</p>
+                                <p class="text-[11px] text-slate-400">Perpustakaan Dunia</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Interactive Accent Card -->
+                    <div class="w-full md:w-auto flex-shrink-0">
+                        <div class="glass-dark p-6 rounded-3xl max-w-xs mx-auto shadow-2xl border border-brand-gold/30 text-center relative">
+                            <div class="absolute -top-3 -right-3 bg-brand-gold text-slate-950 font-black text-[10px] uppercase px-2 py-1 rounded-full shadow">
+                                REKOMENDASI HARI INI
+                            </div>
+                            <div class="w-28 h-40 mx-auto rounded-xl shadow-lg bg-gradient-to-br from-emerald-600 to-slate-900 overflow-hidden mb-3 flex items-center justify-center p-3 text-center border border-white/20">
+                                <div>
+                                    <i class="fa-solid fa-kaaba text-3xl text-brand-gold mb-2 block"></i>
+                                    <p class="text-xs font-bold text-white line-clamp-2">Sirah Nabawiyah Remaja</p>
+                                </div>
+                            </div>
+                            <h4 class="text-xs font-bold text-white">Sirah Nabawiyah Remaja</h4>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Syaikh Shafiyurrahman</p>
+                            <button onclick="openReaderModal('Sirah Nabawiyah Remaja', 'Syaikh Shafiyurrahman Al-Mubarakfuri', 'Keislaman', 'Buku ini menyajikan perjalanan hidup Nabi Muhammad SAW secara padat dan inspiratif bagi kalangan usia SMPIT.')" 
+                                class="mt-3 w-full py-2 px-4 rounded-xl emerald-gradient-btn text-white font-semibold text-xs shadow hover:opacity-90 transition">
+                                <i class="fa-solid fa-book-open mr-1"></i> Baca Sekarang
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 1: GLOBAL & NATIONAL DIGITAL LIBRARIES ACCESS -->
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-20">
+                <div class="glass-card rounded-2xl p-5 shadow-xl border border-slate-200">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-xs font-extrabold uppercase tracking-widest text-slate-500 flex items-center gap-2">
+                            <i class="fa-solid fa-globe text-brand-emerald"></i> Portal Perpustakaan Terkemuka Indonesia & Dunia
+                        </h3>
+                        <span class="text-[11px] text-brand-emerald font-semibold hidden sm:inline">1-Klik Akses Langsung</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+                        <!-- Link 1: Perpusnas RI -->
+                        <a href="https://e-resources.perpusnas.go.id/" target="_blank" rel="noopener noreferrer" 
+                            class="group p-3 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-brand-emerald transition duration-200 flex flex-col items-center text-center">
+                            <div class="w-9 h-9 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm mb-2 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-building-columns"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-800 group-hover:text-brand-emerald">Perpusnas RI</span>
+                            <span class="text-[10px] text-slate-400 mt-0.5">E-Resources Nasional</span>
+                        </a>
+
+                        <!-- Link 2: iPusnas -->
+                        <a href="https://ipusnas.id/" target="_blank" rel="noopener noreferrer" 
+                            class="group p-3 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-brand-emerald transition duration-200 flex flex-col items-center text-center">
+                            <div class="w-9 h-9 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm mb-2 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-tablet-screen-button"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-800 group-hover:text-brand-emerald">iPusnas Digital</span>
+                            <span class="text-[10px] text-slate-400 mt-0.5">Aplikasi E-Book RI</span>
+                        </a>
+
+                        <!-- Link 3: Perpustakaan Kemendikbud -->
+                        <a href="https://perpustakaan.kemdikbud.go.id/" target="_blank" rel="noopener noreferrer" 
+                            class="group p-3 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-brand-emerald transition duration-200 flex flex-col items-center text-center">
+                            <div class="w-9 h-9 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm mb-2 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-800 group-hover:text-brand-emerald">Kemendikbud</span>
+                            <span class="text-[10px] text-slate-400 mt-0.5">Pustaka Pendidikan</span>
+                        </a>
+
+                        <!-- Link 4: Open Library -->
+                        <a href="https://openlibrary.org/" target="_blank" rel="noopener noreferrer" 
+                            class="group p-3 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-brand-emerald transition duration-200 flex flex-col items-center text-center">
+                            <div class="w-9 h-9 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-sm mb-2 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-book"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-800 group-hover:text-brand-emerald">Open Library</span>
+                            <span class="text-[10px] text-slate-400 mt-0.5">Katalog Informasi Dunia</span>
+                        </a>
+
+                        <!-- Link 5: World Digital Library -->
+                        <a href="https://www.loc.gov/collections/world-digital-library/about-this-collection/" target="_blank" rel="noopener noreferrer" 
+                            class="group p-3 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-brand-emerald transition duration-200 flex flex-col items-center text-center">
+                            <div class="w-9 h-9 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-sm mb-2 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-earth-americas"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-800 group-hover:text-brand-emerald">World Digital Lib</span>
+                            <span class="text-[10px] text-slate-400 mt-0.5">UNESCO / LOC</span>
+                        </a>
+
+                        <!-- Link 6: Jakarta Islamic Centre Library -->
+                        <a href="https://islamic-center.or.id/" target="_blank" rel="noopener noreferrer" 
+                            class="group p-3 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-brand-emerald transition duration-200 flex flex-col items-center text-center">
+                            <div class="w-9 h-9 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-sm mb-2 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-mosque"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-800 group-hover:text-brand-emerald">Pustaka Islam</span>
+                            <span class="text-[10px] text-slate-400 mt-0.5">Koleksi Keislaman</span>
+                        </a>
+
+                        <!-- Link 7: WeLib Digital -->
+                        <a href="https://welib.org/" target="_blank" rel="noopener noreferrer" 
+                            class="group p-3 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-brand-emerald transition duration-200 flex flex-col items-center text-center">
+                            <div class="w-9 h-9 rounded-lg bg-cyan-100 text-cyan-700 flex items-center justify-center font-bold text-sm mb-2 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-book-atlas"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-800 group-hover:text-brand-emerald">WeLib Digital</span>
+                            <span class="text-[10px] text-slate-400 mt-0.5">Akses Pustaka Terbuka</span>
+                        </a>
+
+                        <!-- Link 8: F15 Library -->
+                        <a href="https://f15library.com/" target="_blank" rel="noopener noreferrer" 
+                            class="group p-3 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-brand-emerald transition duration-200 flex flex-col items-center text-center">
+                            <div class="w-9 h-9 rounded-lg bg-orange-100 text-orange-700 flex items-center justify-center font-bold text-sm mb-2 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-book-journal-whills"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-800 group-hover:text-brand-emerald">F15 Library</span>
+                            <span class="text-[10px] text-slate-400 mt-0.5">Koleksi Digital Global</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: DIGITAL BOOK CATALOGUE -->
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+                <!-- Section Header & Filter Tabs -->
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-7 bg-brand-emerald rounded-full"></span>
+                            <h3 class="text-2xl font-extrabold text-slate-900 tracking-tight">Katalog Koleksi Digital</h3>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1 pl-4">Buku Pilihan Terbaru untuk Guru, Murid SMPIT, dan Khazanah Islamiah</p>
+                    </div>
+
+                    <!-- Filter Tabs -->
+                    <div class="flex items-center gap-1.5 bg-slate-200/70 p-1.5 rounded-2xl overflow-x-auto text-xs font-semibold">
+                        <button onclick="setCategory('all')" id="cat-all" class="cat-btn active px-4 py-2 rounded-xl bg-white text-brand-emerald shadow transition whitespace-nowrap">
+                            <i class="fa-solid fa-layer-group mr-1.5"></i>Semua Buku
+                        </button>
+                        <button onclick="setCategory('Guru')" id="cat-Guru" class="cat-btn px-4 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition whitespace-nowrap">
+                            <i class="fa-solid fa-chalkboard-user mr-1.5"></i>Buku Guru & Pedagogi
+                        </button>
+                        <button onclick="setCategory('Murid')" id="cat-Murid" class="cat-btn px-4 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition whitespace-nowrap">
+                            <i class="fa-solid fa-user-graduate mr-1.5"></i>Siswa SMPIT
+                        </button>
+                        <button onclick="setCategory('Keislaman')" id="cat-Keislaman" class="cat-btn px-4 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition whitespace-nowrap">
+                            <i class="fa-solid fa-heart-pulse mr-1.5"></i>Keislaman & Akhlak
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Book Cards Grid -->
+                <div id="book-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                    <!-- Books dynamically inserted via Javascript -->
+                </div>
+
+                <!-- Empty State Message -->
+                <div id="no-books-msg" class="hidden text-center py-12 glass-card rounded-2xl">
+                    <i class="fa-solid fa-book-bookmark text-4xl text-slate-300 mb-3"></i>
+                    <p class="text-slate-600 font-semibold text-sm">Buku yang Anda cari tidak ditemukan.</p>
+                    <p class="text-xs text-slate-400 mt-1">Coba gunakan kata kunci lain atau pilih kategori Semua Buku.</p>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="bg-brand-navy text-white border-t border-brand-gold/30 pt-10 pb-6">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-slate-800">
+                    <!-- Column 1: School Identity -->
+                    <div>
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-9 h-9 rounded-xl bg-brand-emerald flex items-center justify-center text-brand-gold font-bold">
+                                <i class="fa-solid fa-mosque"></i>
+                            </div>
+                            <span class="font-bold text-lg text-white tracking-wide">SMPIT Al Madaniy</span>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Pusat Sumber Belajar Digital SMP Terpadu Al Madaniy Lubuk Basung. Menghadirkan layanan literasi terbaik berbasis nilai-nilai Islamiah.
+                        </p>
+                    </div>
+
+                    <!-- Column 2: Quick Info -->
+                    <div>
+                        <h4 class="text-xs font-bold text-brand-gold uppercase tracking-wider mb-3">Lokasi & Kontak</h4>
+                        <ul class="text-xs text-slate-300 space-y-2">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-location-dot text-brand-emerald mt-0.5"></i>
+                                <span>Jl. Utama Lubuk Basung, Kab. Agam, Sumatera Barat</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fa-solid fa-envelope text-brand-emerald"></i>
+                                <span>perpus@smpitalmadaniy.sch.id</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fa-solid fa-clock text-brand-emerald"></i>
+                                <span>Layanan Digital 24 Jam Nonstop</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 3: Tagline / Quote -->
+                    <div>
+                        <h4 class="text-xs font-bold text-brand-gold uppercase tracking-wider mb-3">Slogan Perpustakaan</h4>
+                        <blockquote class="text-xs text-slate-300 italic border-l-2 border-brand-emerald pl-3 py-1">
+                            "Membaca adalah jembatan emas menuju kecemerlangan ilmu dan keagungan karakter santri Rabbani."
+                        </blockquote>
+                        <div class="mt-4 flex gap-2">
+                            <span class="text-[10px] bg-slate-800 px-2.5 py-1 rounded-md text-emerald-400 border border-slate-700">Digital Smart Campus</span>
+                            <span class="text-[10px] bg-slate-800 px-2.5 py-1 rounded-md text-amber-300 border border-slate-700">Akreditasi Unggul</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400">
+                    <p>&copy; 2026 SMPIT Al Madaniy Lubuk Basung. All Rights Reserved.</p>
+                    <p class="mt-2 sm:mt-0 text-[11px] text-slate-300">
+                        Dirancang dengan Presisi & Elegan untuk Kemajuan Literasi Sekolah
+                    </p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- MODAL 1: DIGITAL READER & BOOK DETAILS -->
+    <div id="reader-modal" class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/85 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="glass-card w-full max-w-4xl h-[90vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col border border-brand-gold/30">
+            <!-- Modal Header / Reader Bar -->
+            <div class="bg-brand-navy px-4 sm:px-6 py-3 border-b border-brand-gold/30 flex items-center justify-between text-white">
+                <div class="flex items-center space-x-3 truncate">
+                    <span class="p-2 rounded-xl bg-brand-emerald/20 text-brand-gold text-sm">
+                        <i class="fa-solid fa-book-open"></i>
+                    </span>
+                    <div class="truncate">
+                        <h3 id="modal-book-title" class="font-bold text-sm sm:text-base truncate text-white">Judul Buku</h3>
+                        <p id="modal-book-author" class="text-xs text-slate-300 truncate">Penulis</p>
+                    </div>
+                </div>
+
+                <!-- Reader Controls -->
+                <div class="flex items-center space-x-2">
+                    <button onclick="toggleBookmarkCurrent()" title="Bookmark" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-brand-gold text-xs transition">
+                        <i id="reader-bookmark-icon" class="fa-regular fa-bookmark"></i>
+                    </button>
+                    <button onclick="closeReaderModal()" class="p-2 rounded-lg bg-rose-600/80 hover:bg-rose-600 text-white text-xs transition">
+                        <i class="fa-solid fa-xmark"></i> Close Preview
+                    </button>
+                </div>
+            </div>
+
+            <!-- Simulated E-Book Reader Body -->
+            <div class="flex-1 bg-slate-100 overflow-y-auto p-4 sm:p-8 flex flex-col items-center">
+                <div class="max-w-2xl w-full bg-white p-6 sm:p-10 rounded-2xl shadow-md border border-slate-200 min-h-full flex flex-col justify-between">
+                    <div>
+                        <!-- Book Cover / Header Badge inside reader -->
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+                            <span id="modal-book-category" class="px-3 py-1 rounded-full bg-emerald-100 text-brand-emerald text-xs font-bold">
+                                Keislaman
+                            </span>
+                            <span class="text-xs text-slate-400 font-mono">Pratinjau Digital SMPIT Al Madaniy</span>
+                        </div>
+
+                        <!-- Main Content Text Simulation -->
+                        <div class="prose max-w-none">
+                            <h2 id="modal-content-title" class="text-xl font-bold text-slate-900 mb-2">Prakata & Ringkasan Eksekutif</h2>
+                            <p class="text-xs text-slate-400 mb-6 italic">Hak Cipta Dilindungi Undang-Undang & Responsisibilitas Literasi SMPIT Al Madaniy</p>
+                            
+                            <div id="modal-book-description" class="text-slate-700 text-sm leading-relaxed space-y-4">
+                                <!-- Dynamic Description Goes Here -->
+                            </div>
+
+                            <div class="mt-8 p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600">
+                                <h4 class="font-bold text-brand-emerald mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Catatan Peminjaman & Akses Penuh:</h4>
+                                <p>Untuk membaca keseluruhan bab fisik atau e-pub versi interaktif lengkap, Anda dapat meminjam langsung di Perpustakaan Fisik SMPIT Al Madaniy atau mengunduh melalui link mitra iPusnas / Perpusnas yang terintegrasi.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pagination Footer Simulation -->
+                    <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                        <button onclick="showToast('Halaman Pertama')" class="px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50">
+                            <i class="fa-solid fa-chevron-left mr-1"></i> Prev
+                        </button>
+                        <span class="font-mono">Halaman 1 dari 12 (Pratinjau)</span>
+                        <button onclick="showToast('Menampilkan Halaman Berikutnya...')" class="px-3 py-1.5 rounded-lg bg-brand-emerald text-white font-semibold">
+                            Next <i class="fa-solid fa-chevron-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: USER DIGITAL QR CARD -->
+    <div id="user-qr-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="glass-card w-full max-w-md rounded-3xl p-6 shadow-2xl border border-brand-gold/40 text-center relative">
+            <button onclick="closeUserQRModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            
+            <div class="w-12 h-12 rounded-2xl bg-brand-emerald/20 text-brand-gold flex items-center justify-center mx-auto mb-2 text-xl border border-brand-emerald/40">
+                <i class="fa-solid fa-id-card"></i>
+            </div>
+            <h3 class="font-extrabold text-lg text-slate-900">Kartu Akses Anggota Digital</h3>
+            <p class="text-xs text-slate-500">SMPIT Al Madaniy Lubuk Basung</p>
+
+            <div class="my-6 p-4 bg-white rounded-2xl border-2 border-brand-gold/30 shadow-inner inline-block">
+                <div id="user-card-qrcode" class="flex justify-center"></div>
+            </div>
+
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-left space-y-1 mb-4">
+                <div class="flex justify-between text-xs">
+                    <span class="text-slate-400">Nama Pengguna:</span>
+                    <span id="qr-modal-name" class="font-bold text-slate-800">Muhammad Rayhan</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-slate-400">ID / Registrasi:</span>
+                    <span id="qr-modal-id" class="font-mono text-brand-emerald font-semibold">2026-MADANIY-01</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-slate-400">Status Akses:</span>
+                    <span class="text-emerald-600 font-bold">AKTIF / TERVERIFIKASI</span>
+                </div>
+            </div>
+
+            <p class="text-[11px] text-slate-400">Tunjukkan QR Code ini ke Uustadz/Pustakawan saat melakukan peminjaman buku fisik di sekolah.</p>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Seed database for books curated for SMPIT Al Madaniy
+        const booksData = [
+            {
+                id: 1,
+                title: "Pedagogi Modern Berbasis Karakter Islam",
+                author: "Dr. H. Abdurrahman, M.Pd.",
+                category: "Guru",
+                rating: 4.9,
+                badge: "Terpopuler Guru",
+                coverColor: "from-blue-700 to-slate-900",
+                icon: "fa-chalkboard-user",
+                description: "Buku panduan utama bagi para Ustadz dan Ustadzah SMPIT dalam menyusun metode pembelajaran abad 21 yang memadukan keunggulan sains dengan pendidikan adab dan karakter Rabbani."
+            },
+            {
+                id: 2,
+                title: "Sirah Nabawiyah Remaja: Teladan Utama",
+                author: "Syaikh Shafiyurrahman",
+                category: "Keislaman",
+                rating: 5.0,
+                badge: "Rekomendasi Utama",
+                coverColor: "from-emerald-700 to-slate-900",
+                icon: "fa-kaaba",
+                description: "Menyajikan kisah perjalanan hidup Rasulullah SAW dengan gaya bahasa yang segar dan menarik khusus untuk usia remaja SMP, memupuk rasa cinta kepada Nabi."
+            },
+            {
+                id: 3,
+                title: "Ensiklopedia Sains Dalam Al-Qur'an",
+                author: "Prof. Dr. Ahmad Baiquni",
+                category: "Murid",
+                rating: 4.8,
+                badge: "Sains Islami",
+                coverColor: "from-amber-600 to-slate-900",
+                icon: "fa-atom",
+                description: "Membahas fenomena keajaiban alam semesta, astronomi, biologi, dan fisika yang telah terukir jelas dalam ayat-ayat suci Al-Qur'an 14 abad silam."
+            },
+            {
+                id: 4,
+                title: "Akhlak Mulia Generasi Rabbani",
+                author: "Ustadz Hanif Al-Madaniy",
+                category: "Keislaman",
+                rating: 4.9,
+                badge: "Buku Pembiasaan",
+                coverColor: "from-teal-700 to-slate-900",
+                icon: "fa-heart",
+                description: "Panduan praktis pembentukan akhlakul karimah harian bagi murid SMPIT, mulai dari adab berteman, berbakti kepada orang tua, hingga adab menuntut ilmu."
+            },
+            {
+                id: 5,
+                title: "Strategi Pembelajaran STEM Berintegrasi Islam",
+                author: "Tim Kurikulum Al Madaniy",
+                category: "Guru",
+                rating: 4.7,
+                badge: "Referensi Pengajar",
+                coverColor: "from-indigo-700 to-slate-900",
+                icon: "fa-laptop-code",
+                description: "Kumpulan modul dan panduan mengajar Science, Technology, Engineering, & Mathematics yang diintegrasikan dengan nilai-nilai tauhid."
+            },
+            {
+                id: 6,
+                title: "Petualangan Matematika Asyik SMP",
+                author: "Dra. Siti Nurbaya, M.Sc.",
+                category: "Murid",
+                rating: 4.6,
+                badge: "Favorit Murid",
+                coverColor: "from-purple-700 to-slate-900",
+                icon: "fa-calculator",
+                description: "Matematika tidak lagi menakutkan! Dilengkapi trik cepat, ilustrasi komik interaktif, dan soal-soal penalaran HOTS untuk persiapan kompetisi."
+            },
+            {
+                id: 7,
+                title: "Tafsir Ringkas Juz 'Amma untuk Remaja",
+                author: "Dr. M. Quraish Shihab",
+                category: "Keislaman",
+                rating: 4.9,
+                badge: "Wajib Tahfidz",
+                coverColor: "from-emerald-800 to-slate-900",
+                icon: "fa-quran",
+                description: "Penjelasan mendalam dan praktis seputar makna surat-surat pendek dalam Juz 30 untuk membantu pemahaman dan hafalan murid SMPIT Al Madaniy."
+            },
+            {
+                id: 8,
+                title: "Panduan Manajemen Kelas Efektif & Empatis",
+                author: "Drs. Eko Prasetyo, M.Ed.",
+                category: "Guru",
+                rating: 4.8,
+                badge: "Best Practice",
+                coverColor: "from-rose-700 to-slate-900",
+                icon: "fa-people-roof",
+                description: "Teknik mengelola dinamika emosional remaja usia SMP, komunikasi efektif guru-murid, serta strategi membangun kelas yang inklusif dan menyenangkan."
+            }
+        ];
+
+        // State variables
+        let currentUser = {
+            name: "Tamu Kehormatan",
+            id: "GUEST-2026",
+            role: "Murid"
+        };
+        let activeCategory = 'all';
+        let bookmarkedBookIds = [];
+
+        // On Page Load Initialization
+        window.onload = function() {
+            generateInitialQRCode();
+            renderBooks();
+        };
+
+        // Generate initial QR Code in modal gate
+        function generateInitialQRCode() {
+            const qrContainer = document.getElementById("qrcode-canvas");
+            qrContainer.innerHTML = "";
+            new QRCode(qrContainer, {
+                text: "https://smpitalmadaniy.sch.id/library?access=ALMADANIY-LIB-2026",
+                width: 130,
+                height: 130,
+                colorDark : "#059669",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        }
+
+        // Switch Tabs inside Gate Modal
+        function switchGateTab(tab) {
+            const btnGuest = document.getElementById('tab-btn-guest');
+            const btnQr = document.getElementById('tab-btn-qr');
+            const formGuest = document.getElementById('gate-form-guest');
+            const formQr = document.getElementById('gate-form-qr');
+
+            if(tab === 'guest') {
+                btnGuest.className = "flex-1 py-3 text-center text-brand-emerald border-b-2 border-brand-emerald font-bold transition-all";
+                btnQr.className = "flex-1 py-3 text-center text-slate-400 hover:text-slate-600 transition-all";
+                formGuest.classList.remove('hidden');
+                formQr.classList.add('hidden');
+            } else {
+                btnQr.className = "flex-1 py-3 text-center text-brand-emerald border-b-2 border-brand-emerald font-bold transition-all";
+                btnGuest.className = "flex-1 py-3 text-center text-slate-400 hover:text-slate-600 transition-all";
+                formQr.classList.remove('hidden');
+                formGuest.classList.add('hidden');
+            }
+        }
+
+        // Handle Guest Form Login Submission
+        function handleGuestLogin(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('user-name').value.trim();
+            const idInput = document.getElementById('user-id').value.trim();
+            const roleInput = document.querySelector('input[name="user-role"]:checked').value;
+
+            if(nameInput === "") {
+                showToast("Mohon masukkan nama Anda.", true);
+                return;
+            }
+
+            currentUser.name = nameInput;
+            currentUser.id = idInput || "ID-" + Math.floor(1000 + Math.random() * 9000);
+            currentUser.role = roleInput;
+
+            enterMainPlatform();
+        }
+
+        // Quick login with QR demo
+        function loginWithDefaultQR() {
+            currentUser.name = "Siswa QR Terverifikasi";
+            currentUser.id = "NIS-2026088";
+            currentUser.role = "Murid";
+            enterMainPlatform();
+        }
+
+        // Transition from Gate Modal to Main App
+        function enterMainPlatform() {
+            const gateModal = document.getElementById('gate-modal');
+            const mainApp = document.getElementById('main-app');
+
+            // Update user badge elements
+            document.getElementById('display-user-name').innerText = currentUser.name;
+            document.getElementById('display-user-role').innerText = currentUser.role + " SMPIT";
+            
+            // Generate initials
+            const initials = currentUser.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
+            document.getElementById('display-user-initials').innerText = initials || "TM";
+
+            // Hide Modal, Show Main App
+            gateModal.classList.add('hidden');
+            mainApp.classList.remove('hidden');
+            setTimeout(() => {
+                mainApp.classList.remove('opacity-0');
+            }, 50);
+
+            showToast(`Selamat Datang, ${currentUser.name}!`);
+        }
+
+        // Re-open Gate Modal
+        function reopenGateModal() {
+            const gateModal = document.getElementById('gate-modal');
+            const mainApp = document.getElementById('main-app');
+            mainApp.classList.add('opacity-0');
+            setTimeout(() => {
+                mainApp.classList.add('hidden');
+                gateModal.classList.remove('hidden');
+            }, 300);
+        }
+
+        // Render Books in Grid
+        function renderBooks() {
+            const grid = document.getElementById('book-grid');
+            const noBooksMsg = document.getElementById('no-books-msg');
+            const searchKeyword = (document.getElementById('global-search-input').value || "").toLowerCase();
+
+            grid.innerHTML = "";
+
+            const filtered = booksData.filter(book => {
+                const matchesCat = (activeCategory === 'all') || (book.category === activeCategory);
+                const matchesSearch = book.title.toLowerCase().includes(searchKeyword) || 
+                                      book.author.toLowerCase().includes(searchKeyword) ||
+                                      book.category.toLowerCase().includes(searchKeyword);
+                return matchesCat && matchesSearch;
+            });
+
+            if(filtered.length === 0) {
+                noBooksMsg.classList.remove('hidden');
+                return;
+            } else {
+                noBooksMsg.classList.add('hidden');
+            }
+
+            filtered.forEach(book => {
+                const isBookmarked = bookmarkedBookIds.includes(book.id);
+                const card = document.createElement('div');
+                card.className = "group glass-card rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-slate-200 flex flex-col justify-between transform hover:-translate-y-1";
+
+                card.innerHTML = `
+                    <div>
+                        <!-- Cover Display -->
+                        <div class="h-48 bg-gradient-to-br ${book.coverColor} p-4 relative flex flex-col justify-between text-white overflow-hidden">
+                            <div class="flex items-center justify-between z-10">
+                                <span class="px-2.5 py-1 rounded-full bg-slate-950/60 backdrop-blur-md text-[10px] font-bold text-brand-gold border border-brand-gold/30">
+                                    ${book.badge}
+                                </span>
+                                <button onclick="toggleBookmark(${book.id}, event)" class="w-8 h-8 rounded-full bg-slate-900/50 backdrop-blur-md flex items-center justify-center text-amber-300 hover:bg-slate-900 transition">
+                                    <i class="${isBookmarked ? 'fa-solid' : 'fa-regular'} fa-bookmark text-xs"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="my-auto text-center z-10 px-2">
+                                <i class="fa-solid ${book.icon} text-4xl text-brand-gold/80 mb-2 group-hover:scale-110 transition duration-300"></i>
+                                <h4 class="font-extrabold text-sm leading-snug line-clamp-2 text-white">${book.title}</h4>
+                            </div>
+
+                            <div class="flex items-center justify-between text-[10px] text-slate-300 z-10">
+                                <span><i class="fa-solid fa-star text-amber-400 mr-1"></i>${book.rating}</span>
+                                <span class="bg-brand-emerald/30 px-2 py-0.5 rounded text-emerald-300 font-semibold">${book.category}</span>
+                            </div>
+                        </div>
+
+                        <!-- Card Meta -->
+                        <div class="p-4">
+                            <p class="text-xs font-bold text-slate-800 line-clamp-1">${book.title}</p>
+                            <p class="text-[11px] text-slate-500 mt-0.5">${book.author}</p>
+                            <p class="text-[11px] text-slate-600 mt-2 line-clamp-2 leading-relaxed">${book.description}</p>
+                        </div>
+                    </div>
+
+                    <!-- Card Actions -->
+                    <div class="p-4 pt-0">
+                        <button onclick="openReaderModal('${book.title.replace(/'/g, "\\'")}', '${book.author.replace(/'/g, "\\'")}', '${book.category}', '${book.description.replace(/'/g, "\\'")}', ${book.id})" 
+                            class="w-full py-2 px-3 rounded-xl bg-slate-100 hover:bg-brand-emerald hover:text-white text-slate-700 font-bold text-xs transition duration-200 flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-book-open text-xs"></i>
+                            <span>Baca Pratinjau</span>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Category Filter switching
+        function setCategory(cat) {
+            activeCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.className = "cat-btn px-4 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition whitespace-nowrap";
+            });
+
+            const activeBtn = document.getElementById(`cat-${cat}`);
+            if(activeBtn) {
+                activeBtn.className = "cat-btn active px-4 py-2 rounded-xl bg-brand-emerald text-white font-bold shadow transition whitespace-nowrap";
+            }
+            renderBooks();
+        }
+
+        // Global search filtering
+        function filterBooks() {
+            renderBooks();
+        }
+
+        function syncMobileSearch() {
+            const mobileVal = document.getElementById('mobile-search-input').value;
+            document.getElementById('global-search-input').value = mobileVal;
+            renderBooks();
+        }
+
+        // Open Reader Modal
+        let currentReadingBookId = null;
+        function openReaderModal(title, author, category, description, id = null) {
+            currentReadingBookId = id;
+            document.getElementById('modal-book-title').innerText = title;
+            document.getElementById('modal-book-author').innerText = author;
+            document.getElementById('modal-book-category').innerText = category;
+            document.getElementById('modal-content-title').innerText = "Bab 1: Pengantar & Khazanah Literasi - " + title;
+            document.getElementById('modal-book-description').innerText = description + " Pustaka ini secara komprehensif dirancang untuk melatih kedalaman pemikiran intelektual santri dan tenaga pendidik SMPIT Al Madaniy Lubuk Basung.";
+
+            const modal = document.getElementById('reader-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+            }, 50);
+
+            // Update bookmark icon status inside modal reader
+            const icon = document.getElementById('reader-bookmark-icon');
+            if(id && bookmarkedBookIds.includes(id)) {
+                icon.className = "fa-solid fa-bookmark text-brand-gold";
+            } else {
+                icon.className = "fa-regular fa-bookmark";
+            }
+        }
+
+        function closeReaderModal() {
+            const modal = document.getElementById('reader-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // User Personal Digital QR Modal
+        function showUserQRModal() {
+            document.getElementById('qr-modal-name').innerText = currentUser.name;
+            document.getElementById('qr-modal-id').innerText = currentUser.id;
+
+            const qrContainer = document.getElementById("user-card-qrcode");
+            qrContainer.innerHTML = "";
+            new QRCode(qrContainer, {
+                text: `SMPIT-ALMADANIY|USER:${currentUser.name}|ID:${currentUser.id}|ROLE:${currentUser.role}`,
+                width: 140,
+                height: 140,
+                colorDark : "#0b192c",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
+            const modal = document.getElementById('user-qr-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+            }, 50);
+        }
+
+        function closeUserQRModal() {
+            const modal = document.getElementById('user-qr-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Bookmark Logic
+        function toggleBookmark(id, event) {
+            if(event) event.stopPropagation();
+            const index = bookmarkedBookIds.indexOf(id);
+            if(index > -1) {
+                bookmarkedBookIds.splice(index, 1);
+                showToast("Dihapus dari koleksi Favorit.");
+            } else {
+                bookmarkedBookIds.push(id);
+                showToast("Ditambahkan ke koleksi Favorit!");
+            }
+            renderBooks();
+        }
+
+        function toggleBookmarkCurrent() {
+            if(currentReadingBookId) {
+                toggleBookmark(currentReadingBookId, null);
+                const icon = document.getElementById('reader-bookmark-icon');
+                if(bookmarkedBookIds.includes(currentReadingBookId)) {
+                    icon.className = "fa-solid fa-bookmark text-brand-gold";
+                } else {
+                    icon.className = "fa-regular fa-bookmark";
+                }
+            } else {
+                showToast("Buku tersimpan di bookmark lokal.");
+            }
+        }
+
+        // Custom Toast Notification System
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastMsg.innerText = message;
+            if(isError) {
+                toastIcon.className = "fa-solid fa-circle-exclamation text-rose-500 text-lg";
+            } else {
+                toastIcon.className = "fa-solid fa-circle-check text-brand-gold text-lg";
+            }
+
+            toast.classList.remove('translate-x-full');
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
